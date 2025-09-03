@@ -60,5 +60,10 @@
         </p>
       </div>
     </form>
+    @if(errorNoti()){
+    <div class="w-full flex items-center justify-center">
+      <p class="text-red-500 font-bold text-center">{{errorNoti()}}</p>
+    </div>
+    }
   </div>
 </div>

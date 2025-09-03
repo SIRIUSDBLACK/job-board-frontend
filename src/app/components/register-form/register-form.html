@@ -34,7 +34,7 @@
           placeholder="Enter your email address"
           required
         />
-        @if (registerForm.controls['email'].invalid) {
+         @if (registerForm.controls['email'].invalid) {
         <div>
           <small class="text-red-500" *ngIf="registerForm.controls['email'].errors?.['required']"
             >Email is required</small
@@ -134,5 +134,10 @@
         </p>
       </div>
     </form>
+    @if(errorNoti()){
+      <div class="w-full flex items-center justify-center">
+        <p class="text-red-500 font-bold text-center">{{errorNoti()}}</p>
+      </div>
+    }
   </div>
 </div>
