@@ -34,6 +34,18 @@ export class JobTable {
 
   onDelete(job: any) {
     console.log('Delete button clicked for job:', job);
+    this.jobStore.deleteJob(job.id).subscribe({
+      // Success callback
+      next: () => {
+        console.log('Job deleted and UI updated successfully!');
+        // You could add logic here, like showing a success message
+      },
+      // Error callback (optional, but highly recommended)
+      error: (err) => {
+        console.error('Failed to delete job:', err);
+        // You should handle the error here, e.g., show an error message to the user
+      },
+    });
     // Add your logic for deleting a job here, e.g., show a confirmation dialog and then remove from the array
   }
 }

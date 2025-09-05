@@ -52,7 +52,7 @@ export class JobService {
   }
 
   // API call to delete a job
-  deleteJob(id: number): Observable<any> {
+  deleteExistingJob(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/delete/${id}`);
   }
 }

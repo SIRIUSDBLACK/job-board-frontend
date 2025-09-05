@@ -52,7 +52,7 @@ export class JobStore {
 
   // Method to delete a job via the API and then update the local state
   deleteJob(id: number): Observable<any> {
-    return this.jobService.deleteJob(id).pipe(
+    return this.jobService.deleteExistingJob(id).pipe(
       tap(() => {
         const currentJobs = this.jobsSubject.getValue();
         const updatedJobs = currentJobs.filter(j => j.id !== id);
