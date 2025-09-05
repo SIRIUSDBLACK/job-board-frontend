@@ -1,0 +1,75 @@
+<div class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+      <div class="bg-white rounded-xl shadow-2xl p-8 max-w-lg w-full transform transition-all duration-300 hover:scale-105">
+        <div class="text-center mb-6">
+          <h1 class="text-4xl font-extrabold text-gray-800 mb-2">Post a Job</h1>
+          <p class="text-gray-500">Fill in the details to create a new job listing.</p>
+        </div>
+
+        <form [formGroup]="jobForm" (ngSubmit)="onSubmit()">
+          
+          <div class="mb-4">
+            <label for="title" class="block text-gray-700 font-semibold mb-2">Job Title</label>
+            <input 
+              id="title" 
+              type="text" 
+              formControlName="title"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+              placeholder="e.g., Senior Full-Stack Developer"
+            >
+            @if (jobForm.get('title')?.invalid && jobForm.get('title')?.touched) {
+              <p class="text-red-500 text-sm mt-1">Title is required.</p>
+            }
+          </div>
+
+          <div class="mb-4">
+            <label for="description" class="block text-gray-700 font-semibold mb-2">Job Description</label>
+            <textarea
+              id="description"
+              formControlName="description"
+              rows="4"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+              placeholder="Provide a detailed description of the role and responsibilities."
+            ></textarea>
+            @if (jobForm.get('description')?.invalid && jobForm.get('description')?.touched) {
+              <p class="text-red-500 text-sm mt-1">Description is required.</p>
+            }
+          </div>
+
+          <div class="mb-4">
+            <label for="salary" class="block text-gray-700 font-semibold mb-2">Salary ($)</label>
+            <input 
+              id="salary" 
+              type="number" 
+              formControlName="salary"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+              placeholder="e.g., 85000"
+            >
+            @if (jobForm.get('salary')?.invalid && jobForm.get('salary')?.touched) {
+              <p class="text-red-500 text-sm mt-1">Salary is required and must be a positive number.</p>
+            }
+          </div>
+          
+          <div class="mb-6">
+            <label for="location" class="block text-gray-700 font-semibold mb-2">Location</label>
+            <input 
+              id="location" 
+              type="text" 
+              formControlName="location"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+              placeholder="e.g., San Francisco, CA"
+            >
+            @if (jobForm.get('location')?.invalid && jobForm.get('location')?.touched) {
+              <p class="text-red-500 text-sm mt-1">Location is required.</p>
+            }
+          </div>
+          
+          <button 
+            type="submit" 
+            [disabled]="jobForm.invalid"
+            class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 disabled:bg-indigo-400 disabled:cursor-not-allowed"
+          >
+            Post Job
+          </button>
+        </form>
+      </div>
+    </div>

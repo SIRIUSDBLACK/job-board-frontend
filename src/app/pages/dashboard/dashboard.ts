@@ -1,4 +1,5 @@
-import { AuthService } from './../../services/auth';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth/auth';
 import { Component } from '@angular/core';
 
 @Component({
@@ -8,8 +9,11 @@ import { Component } from '@angular/core';
   styleUrl: './dashboard.scss'
 })
 export class Dashboard {
-  constructor(private authService : AuthService ){}
+  constructor(private authService : AuthService ,private router : Router){}
   logout(){
     this.authService.logout()
+  }
+  goToEmpDashboard(){
+    this.router.navigate(["/employer-dashboard"])
   }
 }
