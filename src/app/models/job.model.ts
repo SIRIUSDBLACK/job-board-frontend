@@ -6,6 +6,7 @@ export interface IncomingJobPayload {
   location: string;
   employer_id: number;
   created_at?: Date;
+  employer_email? : string;
 }
 
 export interface IncomingGetJobsResult {
@@ -17,6 +18,7 @@ export interface IncomingCreateOrUpdateJobResult {
   message : string;
   job: IncomingJobPayload
 }
+
 
 export interface OutgoingJobPayload {
   title: string ;

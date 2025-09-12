@@ -16,4 +16,10 @@ export class Dashboard {
   goToEmpDashboard(){
     this.router.navigate(["/employer-dashboard"])
   }
+  goToSeekerDashboard(){
+    this.router.navigate(["/seeker-dashboard"])
+  }
+  goToAdminDashboard(){
+    this.router.navigate(["/admin-dashborad/stats-chart"])
+  }
 }

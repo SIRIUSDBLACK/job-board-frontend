@@ -1,0 +1,69 @@
+<!-- A self-contained HTML file for the job detail page with Tailwind CSS -->
+<div class="p-4 sm:p-8 bg-gray-50 min-h-screen font-sans antialiased">
+
+  <!-- A loading message for when the data is not yet available -->
+  <div *ngIf="!(job$ | async)" class="flex items-center justify-center h-full">
+    <div class="flex flex-col items-center p-8 bg-white rounded-xl shadow-lg">
+      <svg class="animate-spin h-8 w-8 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <p class="mt-4 text-gray-600 font-medium text-lg">Loading job details...</p>
+    </div>
+  </div>
+
+  <!-- The main job detail card, displayed when the job data is available -->
+  <div *ngIf="job$ | async as job" class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-3xl shadow-xl overflow-hidden p-6 sm:p-10">
+
+      <!-- Job Title Section -->
+      <div class="flex items-start justify-between">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight">
+          {{ job.title }}
+        </h1>
+        <div class="text-xs sm:text-sm text-gray-500 mt-2 ml-4 flex-shrink-0">
+          Posted on {{ job.created_at | date }}
+        </div>
+      </div>
+
+      <!-- Key Details Section -->
+      <div class="mt-6 space-y-4">
+        <div class="flex items-center text-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-500 flex-shrink-0 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <p class="font-medium">Location:</p>
+          <span class="ml-2 font-normal">{{ job.location }}</span>
+        </div>
+        <div class="flex items-center text-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500 flex-shrink-0 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V4m0 8v4m-5 4H9m1.406-12.004S17 4.283 17 9c0 5.5-5 11-5 11s-5-5.5-5-11c0-4.717 4.59-8.717 5.406-12.004z" />
+          </svg>
+          <p class="font-medium">Salary:</p>
+          <span class="ml-2 font-normal">${{ job.salary }}</span>
+        </div>
+      </div>
+
+      <!-- Job Description Section -->
+      <div class="mt-8">
+        <h3 class="text-xl font-bold text-gray-800 border-b-2 pb-2 border-gray-200">Job Description</h3>
+        <p class="mt-4 text-gray-600 leading-relaxed">
+          {{ job.description }}
+        </p>
+      </div>
+      
+      <!-- Back Button -->
+      <div class="mt-10">
+        <button onclick="window.history.back()" class="w-full sm:w-auto flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition ease-in-out duration-150 transform hover:scale-105">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+          </svg>
+          Go Back
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

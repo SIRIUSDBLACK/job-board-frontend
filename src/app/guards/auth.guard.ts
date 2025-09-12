@@ -1,30 +1,25 @@
+// src/app/guards/auth.guard.ts
+
+import { inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class AuthGuard implements CanActivate {
-constructor(
-    private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+export const AuthGuard: CanActivateFn = (route, state) => {
+  const router = inject(Router);
+  const platformId = inject(PLATFORM_ID);
 
-  canActivate(): boolean {
-    // Check if the code is running in the browser
-    if (isPlatformBrowser(this.platformId)) {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        this.router.navigate(['/login']);
-        return false;
-      } else {
-        return true;
-      }
+  if (isPlatformBrowser(platformId)) {
+    // On the browser, we have access to localStorage
+    const token = localStorage.getItem('token');
+    if (token) {
+      return true; // Allow navigation if a token exists
+    } else {
+      router.navigate(['/login']);
+      return false; // Block navigation if no token
     }
-
-    // If on the server (SSR), just return true for now to allow rendering,
-    // and the client-side code will handle the redirection after hydration.
-    return true;
   }
-}
+
+  // On the server, we assume the user is authenticated for rendering purposes
+  // The client-side code will handle the redirection after hydration
+  return true;
+};

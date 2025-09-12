@@ -1,8 +1,8 @@
 // src/app/services/job.service.ts
 
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, map, Observable, of } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { catchError, map, Observable, of, tap } from 'rxjs';
 import {
   IncomingCreateOrUpdateJobResult,
   IncomingGetJobsResult,
@@ -55,4 +55,46 @@ export class JobService {
   deleteExistingJob(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/delete/${id}`);
   }
+
+  jobDetail(id: number): Observable<IncomingJobPayload | null> {
+    return this.http.get<IncomingCreateOrUpdateJobResult>(`${this.apiUrl}/job-detail/${id}`).pipe(
+      // Log 1: See the raw response from the server
+      tap((response) => console.log('Raw response:', response)),
+      // Log 2: See the value of response.job
+      tap((response) => console.log('Response.job value:', response?.job)),
+
+      map((response) => (response ? response.job : null)),
+
+      catchError((error: HttpErrorResponse) => {
+        // Log 3: See if the catchError block is being triggered
+        console.error('Error in catchError:', error);
+        return of(null);
+      })
+    );
+  }
+
+  getJobs(filters: any = {}, page = 1, limit = 10): Observable<any> {
+    
+
+    console.log('--- getJobs() called ---');
+    console.log('Filters:', filters);
+    console.log('Page:', page);
+    console.log('Limit:', limit);
+
+    let params = new HttpParams().set('page', page).set('limit', limit);
+
+    Object.keys(filters).forEach((key) => {
+      if (filters[key]) {
+        params = params.set(key, filters[key]);
+      }
+    });
+
+    console.log('Requesting URL:', `${this.apiUrl}/`);
+    console.log('Requesting with params:', params.toString());
+
+    return this.http.get(`${this.apiUrl}/`, { params });
+
+
+  }
+
 }

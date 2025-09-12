@@ -2,9 +2,12 @@ export interface User {
     id: number,
     name : string,
     email : string,
-    role : "admin" | "employer" | "seeker"
-    created_at : string,
+    role : UserRole
+    created_at? : string,
+    is_banned? : boolean
 }
+
+export type UserRole = "admin" | "employer" | "seeker"
 
 export interface RegisterPayload {
     name : string | null,

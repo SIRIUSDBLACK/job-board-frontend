@@ -4,35 +4,47 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { JobService } from '../job/job';
 import { IncomingJobPayload, OutgoingJobPayload } from '../../models/job.model';
+import { filter, take } from 'rxjs/operators'; // <-- Import these RxJS operators
+import { AuthService } from '../auth/auth';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class JobStore {
   // Private BehaviorSubject to hold the current state
-  // An empty array is the initial value
   private jobsSubject = new BehaviorSubject<IncomingJobPayload[]>([]);
 
   // Public observable for components to subscribe to
-  // We use .asObservable() to prevent components from emitting new values
   public jobs$ = this.jobsSubject.asObservable();
 
-  constructor(private jobService: JobService) {
+  constructor(
+    private jobService: JobService,
+    private authService: AuthService // <-- Inject AuthService
+  ) {
     // Automatically load all jobs when the store is instantiated
-    // this.loadJobs();
+    this.loadJobs();
   }
 
   // Method to fetch all jobs from the API and update the local state
   loadJobs(): void {
-    this.jobService.getMyJobs().subscribe(
-      jobs => this.jobsSubject.next(jobs)
-    );
+    // THIS IS THE KEY FIX: Wait for the authentication state to be true
+    this.authService.isAuthenticated$
+      .pipe(
+        // The filter operator will hold the stream until isAuthenticated is true
+        filter((isAuthenticated) => isAuthenticated === true),
+        // The take(1) operator will complete the stream after the first true value, preventing multiple API calls
+        take(1)
+      )
+      .subscribe(() => {
+        // Now that we are authenticated, make the HTTP call
+        this.jobService.getMyJobs().subscribe((jobs) => this.jobsSubject.next(jobs));
+      });
   }
 
   // Method to create a new job via the API and then update the local state
   createJob(job: OutgoingJobPayload): Observable<IncomingJobPayload> {
     return this.jobService.createJob(job).pipe(
-      tap(createdJob => {
+      tap((createdJob) => {
         const currentJobs = this.jobsSubject.getValue();
         this.jobsSubject.next([...currentJobs, createdJob]);
       })
@@ -42,9 +54,9 @@ export class JobStore {
   // Method to update a job via the API and then update the local state
   updateJob(id: number, job: OutgoingJobPayload): Observable<IncomingJobPayload> {
     return this.jobService.updateJob(id, job).pipe(
-      tap(updatedJob => {
+      tap((updatedJob) => {
         const currentJobs = this.jobsSubject.getValue();
-        const updatedJobs = currentJobs.map(j => j.id === id ? updatedJob : j);
+        const updatedJobs = currentJobs.map((j) => (j.id === id ? updatedJob : j));
         this.jobsSubject.next(updatedJobs);
       })
     );
@@ -55,7 +67,7 @@ export class JobStore {
     return this.jobService.deleteExistingJob(id).pipe(
       tap(() => {
         const currentJobs = this.jobsSubject.getValue();
-        const updatedJobs = currentJobs.filter(j => j.id !== id);
+        const updatedJobs = currentJobs.filter((j) => j.id !== id);
         this.jobsSubject.next(updatedJobs);
       })
     );
