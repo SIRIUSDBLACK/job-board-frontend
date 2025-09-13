@@ -23,7 +23,7 @@ import { JobService } from '../../services/job/job';
 import { AuthService } from '../../services/auth/auth';
 import { IncomingJobPayload } from '../../models/job.model';
 import { ApplicationService } from '../../services/application/application';
-import { IncomingApplicationResponse } from '../../models/application.model';
+import { IncomingCreateApplicationResponse } from '../../models/application.model';
 
 @Component({
   selector: 'app-seeker-job-list',
@@ -244,7 +244,7 @@ export class SeekerJobList implements OnInit, OnDestroy {
     // Convert the file to a Base64 string before sending
         
         this.applicationService.applyForJob(this.selectedJobId!, this.userId!, this.cvFile).subscribe({
-          next: (response: IncomingApplicationResponse) => {
+          next: (response: IncomingCreateApplicationResponse) => {
             console.log(response);
             this.applicationStatus = 'success';
             this.appliedJobs.add(this.selectedJobId!);

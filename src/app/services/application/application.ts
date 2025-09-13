@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { catchError, filter, map, Observable, of, switchMap, take } from 'rxjs';
 import {
-  IncomingApplicationPayload,
-  IncomingApplicationResponse,
-  IncomingApplicationsResponse,
+  IncomingCreateApplicationResponse,
+  IncomingSeekerApplicationPayload,
+  IncomingSeekerApplicationsResponse,
 } from '../../models/application.model';
 import { AuthService } from '../auth/auth';
 
@@ -21,7 +21,7 @@ export class ApplicationService {
     jobId: number,
     seekerId: number,
     cvFile: File
-  ): Observable<IncomingApplicationResponse> {
+  ): Observable<IncomingCreateApplicationResponse> {
     const stringSelectedId = JSON.stringify(jobId);
     const stringSeekerId = JSON.stringify(seekerId);
     const formData = new FormData();
@@ -34,15 +34,15 @@ export class ApplicationService {
     console.log(formData);
 
     // The HttpClient automatically serializes the object to JSON
-    return this.http.post<IncomingApplicationResponse>(`${this.apiUrl}/apply`, formData);
+    return this.http.post<IncomingCreateApplicationResponse>(`${this.apiUrl}/apply`, formData);
   }
 
-  getApplicationsBySeekerId(): Observable<IncomingApplicationPayload[]> {
+  getApplicationsBySeekerId(): Observable<IncomingSeekerApplicationPayload[]> {
     return this.authService.isAuthenticated$.pipe(
       filter((isAuthenticated) => isAuthenticated),
       take(1),
       switchMap(() =>
-        this.http.get<IncomingApplicationsResponse>(`${this.apiUrl}/get-applications`).pipe(
+        this.http.get<IncomingSeekerApplicationsResponse>(`${this.apiUrl}/get-seeker-applications`).pipe(
           map((response) => {
             console.log(response);
             // Ensure applications is always an array
@@ -55,7 +55,7 @@ export class ApplicationService {
               console.error('An error occurred during application fetch:', error);
             }
             // Always return empty array on error
-            return of<IncomingApplicationPayload[]>([]);
+            return of<IncomingSeekerApplicationPayload[]>([]);
           })
         )
       )

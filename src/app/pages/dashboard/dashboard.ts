@@ -20,6 +20,6 @@ export class Dashboard {
     this.router.navigate(["/seeker-dashboard"])
   }
   goToAdminDashboard(){
-    this.router.navigate(["/admin-dashborad/stats-chart"])
+    this.router.navigate(["/admin-dashboard"])
   }
 }
