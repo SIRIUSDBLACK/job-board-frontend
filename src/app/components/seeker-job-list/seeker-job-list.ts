@@ -23,7 +23,7 @@ import { JobService } from '../../services/job/job';
 import { AuthService } from '../../services/auth/auth';
 import { IncomingJobPayload } from '../../models/job.model';
 import { ApplicationService } from '../../services/application/application';
-import { IncomingCreateApplicationResponse } from '../../models/application.model';
+import { IncomingCreateApplicationResponse, IncomingSeekerApplicationPayload } from '../../models/application.model';
 
 @Component({
   selector: 'app-seeker-job-list',
@@ -42,6 +42,7 @@ export class SeekerJobList implements OnInit, OnDestroy {
 
   // State for job data
   jobs: IncomingJobPayload[] = [];
+  applicationData : IncomingSeekerApplicationPayload[] =[]
   isLoading = true;
   noJobsFound = false;
 
@@ -56,11 +57,13 @@ export class SeekerJobList implements OnInit, OnDestroy {
 
   // Modal and application state
   private userId: number | null = null; // Stored for the applyForJob method
-  private appliedJobs: Set<number> = new Set();
+  private appliedJobsId: Set<number> = new Set();
+
   isModalOpen = false;
   selectedJobId: number | null = null;
   cvFile: File | null = null;
-  applicationStatus: 'not-applied' | 'pending' | 'success' | 'error' = 'not-applied';
+  isApplcationSubmitted : 'not-applied' | 'pending' | 'success' | 'error' = 'not-applied';
+  
 
   constructor(
     private jobService: JobService,
@@ -123,8 +126,12 @@ export class SeekerJobList implements OnInit, OnDestroy {
         }),
         tap((applications) => {
           console.log('[Applications] Received applications:', applications);
-          this.appliedJobs = new Set(applications.map((app) => app.job_id));
-          console.log(this.appliedJobs);
+          this.applicationData = applications
+          this.appliedJobsId = new Set(applications.map((app)=>app.job_id));
+          // applications.map((app)=> {
+          //   this.isApplcationSubmitted = app.status
+          // })
+          console.log(this.appliedJobsId);
           this.cd.detectChanges();
         })
       )
@@ -179,7 +186,7 @@ export class SeekerJobList implements OnInit, OnDestroy {
       console.log('[Jobs] Jobs count:', this.jobs.length, 'Total:', this.totalJobs);
       this.isLoading = false
       console.log(this.isLoading);
-      this.cd.markForCheck();
+      this.cd.detectChanges();
       })
     });
   }
@@ -212,8 +219,8 @@ export class SeekerJobList implements OnInit, OnDestroy {
     console.log(this.selectedJobId);
     this.isModalOpen = true;
     this.cvFile = null;
-    this.applicationStatus = 'not-applied';
-    console.log(this.applicationStatus);
+    this.isApplcationSubmitted = 'not-applied';
+    console.log(this.isApplcationSubmitted);
   }
 
   closeApplyModal() {
@@ -235,38 +242,59 @@ export class SeekerJobList implements OnInit, OnDestroy {
     console.log('user start clicked');
     console.log(this.cvFile);
     if (!this.selectedJobId || !this.cvFile || !this.userId) {
-      this.applicationStatus = 'error';
+      this.isApplcationSubmitted = 'error';
       return;
     }
     console.log(this.selectedJobId, this.cvFile, this.userId, ' yse they exist');
-    this.applicationStatus = 'pending';
+    this.isApplcationSubmitted = 'pending';
 
     // Convert the file to a Base64 string before sending
         
         this.applicationService.applyForJob(this.selectedJobId!, this.userId!, this.cvFile).subscribe({
           next: (response: IncomingCreateApplicationResponse) => {
             console.log(response);
-            this.applicationStatus = 'success';
-            this.appliedJobs.add(this.selectedJobId!);
+            this.isApplcationSubmitted = 'success';
+            this.appliedJobsId.add(this.selectedJobId!);
             this.closeApplyModal()
             this.cd.markForCheck();
 
           },
           error: (error: any) => {
             console.error('Application failed:', error.error.message);
-            this.applicationStatus = 'error';
+            this.isApplcationSubmitted = 'error';
             this.cd.markForCheck();
           },
         });
   }
 
   hasApplied(jobId: number): boolean {
-    if(this.appliedJobs.has(jobId)){
+    if(this.appliedJobsId.has(jobId)){
       console.log("true");
     }else{
       console.log("false");
     }
-    return this.appliedJobs.has(jobId);
+    return this.appliedJobsId.has(jobId);
   }
+
+  getApplicationStatus(jobId: number): string | null {
+  const app = this.applicationData.find(a => a.job_id === jobId);
+  return app ? app.status : null; 
+}
+
+getApplicationStatusClass(jobId: number): string {
+  const status = this.getApplicationStatus(jobId);
+
+  switch (status) {
+    case 'pending':
+      return 'text-yellow-600 font-semibold'; // yellow for pending
+    case 'shortlisted':
+      return 'text-green-600 font-semibold'; // green for shortlisted
+    case 'rejected':
+      return 'text-red-600 font-semibold'; // red for rejected
+    default:
+      return '';
+  }
+}
+
 
 }

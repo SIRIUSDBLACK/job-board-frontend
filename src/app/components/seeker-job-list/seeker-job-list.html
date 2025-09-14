@@ -102,8 +102,17 @@
           <!-- Add a check here to ensure job.id is defined before rendering the content -->
           <ng-container *ngIf="job.id !== undefined">
             <div>
-              <h3 class="text-xl font-bold text-gray-900 mb-1">{{ job.title }}</h3>
-              <p class="text-sm text-gray-600 mb-3">{{ job.employer_email }}</p>
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="text-xl font-bold text-gray-900 mb-1">{{ job.title }}</h3>
+                  <p class="text-sm text-gray-600 mb-3">{{ job.employer_email }}</p>
+                </div>
+                <p [ngClass]="getApplicationStatusClass(job.id)">
+                  {{ getApplicationStatus(job.id) }}
+                  <!-- {{ getApplicationStatus(job.id) || 'Not Applied' }} -->
+                </p>
+              </div>
+
               <div class="flex items-center text-gray-700 mb-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -212,7 +221,7 @@
           </button>
         </div>
 
-        <p *ngIf="applicationStatus === 'not-applied'" class="text-sm text-gray-600 mb-4">
+        <p *ngIf="isApplcationSubmitted === 'not-applied'" class="text-sm text-gray-600 mb-4">
           Please upload your CV (PDF file) to apply for this job.
         </p>
 
@@ -253,13 +262,13 @@
         </div>
 
         Application Status Messages
-        <div *ngIf="applicationStatus === 'pending'" class="mt-4 text-center text-indigo-600">
+        <div *ngIf="isApplcationSubmitted === 'pending'" class="mt-4 text-center text-indigo-600">
           Submitting...
         </div>
-        <div *ngIf="applicationStatus === 'success'" class="mt-4 text-center text-green-600">
+        <div *ngIf="isApplcationSubmitted === 'success'" class="mt-4 text-center text-green-600">
           Application submitted successfully!
         </div>
-        <div *ngIf="applicationStatus === 'error'" class="mt-4 text-center text-red-600">
+        <div *ngIf="isApplcationSubmitted === 'error'" class="mt-4 text-center text-red-600">
           Failed to submit application.
         </div>
       </div>
