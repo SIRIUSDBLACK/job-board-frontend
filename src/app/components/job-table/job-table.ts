@@ -1,8 +1,8 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import {  Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { JobStore } from '../../services/job-store/job-store';
 import { IncomingJobPayload } from '../../models/job.model';
-import { Observable } from 'rxjs';
+import { Observable  } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Component({
@@ -17,13 +17,21 @@ export class JobTable {
   isConfirmingDelete: boolean = false;
   jobToDelete: any = null;
 
+  //  private destroy$ = new Subject<void>();
+
   constructor(private jobStore: JobStore, private router: Router) {}
 
   ngOnInit(): void {
-    this.jobStore.loadJobs();
+    this.jobStore.loadJobs()
     this.jobs$ = this.jobStore.jobs$;
-    console.log('Observable assigned to jobs$', this.jobs$);
+    // console.log('Observable assigned to jobs$', this.jobs$);
   }
+  // ngOnDestory():void{
+  //   // Emit a value to signal that the component is being destroyed
+  //   this.destroy$.next();
+  //   // Complete the subject to prevent it from leaking memory itself
+  //   this.destroy$.complete();
+  // }
 
   onUpdate(job: any) {
     this.router.navigate([`/employer-dashboard/job-table/edit-job/${job.id}`]);
@@ -37,13 +45,20 @@ export class JobTable {
     // Add your logic for showing job details, e.g., open a modal or navigate to a new page
   }
 
- onDelete(job: any) {
+  onCheckApplications(job: any) {
+    this.router.navigate([`/employer-dashboard/job-table/job-applications/${job.id}`]);
+    console.log('Detail button clicked for job:', job);
+    // Add your logic for showing job details, e.g., open a modal or navigate to a new page
+  }
+
+  onDelete(job: any) {
     console.log('Delete button clicked for job:', job);
-    
+
     // Set the state to show the confirmation modal
     this.isConfirmingDelete = true;
     this.jobToDelete = job;
   }
+
   // New method to perform the deletion after confirmation
   confirmDelete() {
     if (this.jobToDelete) {

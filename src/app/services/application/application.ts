@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { catchError, filter, map, Observable, of, switchMap, take } from 'rxjs';
 import {
+  ApplicationStatus,
   IncomingCreateApplicationResponse,
+  IncomingJobApplicationPayload,
+  IncomingJobApplicationsResponse,
   IncomingSeekerApplicationPayload,
   IncomingSeekerApplicationsResponse,
 } from '../../models/application.model';
@@ -61,4 +64,40 @@ export class ApplicationService {
       )
     );
   }
+
+
+
+   getApplicationsByJobId(id:number): Observable<IncomingJobApplicationPayload[]> {
+    return this.authService.isAuthenticated$.pipe(
+      filter((isAuthenticated) => isAuthenticated),
+      take(1),
+      switchMap(() =>
+        this.http.get<IncomingJobApplicationsResponse>(`${this.apiUrl}/get-job-applications/${id}`).pipe(
+          map((response) => {
+            console.log(response);
+            // Ensure applications is always an array
+            const apps = response.applications;
+            console.log(apps);
+            return Array.isArray(apps) ? apps : [apps];
+          }),
+          catchError((error) => {
+            if (error instanceof HttpErrorResponse && error.status !== 401) {
+              console.error('An error occurred during application fetch:', error);
+            }
+            // Always return empty array on error
+            return of<IncomingJobApplicationPayload[]>([]);
+          })
+        )
+      )
+    );
+  }
+
+
+    // updateApplicationStatus(id: number, status: ApplicationStatus): Observable<IncomingJobPayload> {
+    //   return this.http.patch<IncomingCreateOrUpdateJobResult>(`${this.apiUrl}/update/${id}`, {status}).pipe(
+    //     // Use the map operator to extract the 'jobs' array
+    //     map((response) => response.job)
+    //   );
+    // }
+
 }

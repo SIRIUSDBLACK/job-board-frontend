@@ -1,3 +1,4 @@
+import { ApplicationsListPerJob } from './components/applications-list-per-job/applications-list-per-job';
 import { Routes } from '@angular/router';
 import { Login } from './pages/login/login';
 import { Register } from './pages/register/register';
@@ -25,6 +26,7 @@ export const routes: Routes = [
   { path: 'employer-dashboard/job-table', component: JobTable, canActivate: [AuthGuard] },
   { path: 'employer-dashboard/job-table/job-detail/:id', component: JobDetail, canActivate: [AuthGuard] },
   { path: 'employer-dashboard/job-table/edit-job/:id', component: EditJob, canActivate: [AuthGuard] },
+  { path : 'employer-dashboard/job-table/job-applications/:id' , component: ApplicationsListPerJob, canActivate: [AuthGuard] },
   { path: 'login', component: Login },
   { path: 'register', component: Register },
   { path: '**', component: ErrorPage },

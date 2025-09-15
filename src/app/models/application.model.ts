@@ -37,3 +37,19 @@ export interface IncomingSeekerApplicationPayload {
   cv_url: string; // The path to the uploaded file on the server
   applied_date: string;
 }
+
+export interface IncomingJobApplicationsResponse {
+  message: string;
+  applications: IncomingJobApplicationPayload[];
+}
+
+export interface IncomingJobApplicationPayload {
+  application_id: number;
+  seeker_id : number;
+  seeker_name: string;
+  status: string;
+  cv_url: string; // The path to the uploaded file on the server
+  applied_date: string;
+}
+
+export type ApplicationStatus = "pending" | "shortlisted" | "rejected"

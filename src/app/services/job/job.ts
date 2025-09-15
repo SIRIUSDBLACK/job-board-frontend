@@ -18,9 +18,11 @@ export class JobService {
 
   constructor(private http: HttpClient) {}
 
+  //Employer
+
   // A read-only list of jobs for the store to pull from
   getMyJobs(): Observable<IncomingJobPayload[]> {
-    return this.http.get<IncomingGetJobsResult>(`${this.apiUrl}/myjobs`).pipe(
+    return this.http.get<IncomingGetJobsResult>(`${this.apiUrl}/my-jobs`).pipe(
       // Use the map operator to extract the 'jobs' array
       map((response) => response.jobs),
       catchError((error) => {
@@ -56,6 +58,8 @@ export class JobService {
     return this.http.delete(`${this.apiUrl}/delete/${id}`);
   }
 
+  //Employer && Seeker
+
   jobDetail(id: number): Observable<IncomingJobPayload | null> {
     return this.http.get<IncomingCreateOrUpdateJobResult>(`${this.apiUrl}/job-detail/${id}`).pipe(
       // Log 1: See the raw response from the server
@@ -72,6 +76,9 @@ export class JobService {
       })
     );
   }
+
+
+// Seeker
 
   getJobs(filters: any = {}, page = 1, limit = 10): Observable<any> {
     
