@@ -52,4 +52,8 @@ export interface IncomingJobApplicationPayload {
   applied_date: string;
 }
 
+export interface IncomingUpdatedStatusAppRes {
+  message : string;
+}
+
 export type ApplicationStatus = "pending" | "shortlisted" | "rejected"

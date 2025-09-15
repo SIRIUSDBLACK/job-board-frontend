@@ -8,6 +8,7 @@ import {
   IncomingJobApplicationsResponse,
   IncomingSeekerApplicationPayload,
   IncomingSeekerApplicationsResponse,
+  IncomingUpdatedStatusAppRes,
 } from '../../models/application.model';
 import { AuthService } from '../auth/auth';
 
@@ -93,11 +94,11 @@ export class ApplicationService {
   }
 
 
-    // updateApplicationStatus(id: number, status: ApplicationStatus): Observable<IncomingJobPayload> {
-    //   return this.http.patch<IncomingCreateOrUpdateJobResult>(`${this.apiUrl}/update/${id}`, {status}).pipe(
-    //     // Use the map operator to extract the 'jobs' array
-    //     map((response) => response.job)
-    //   );
-    // }
+    updateApplicationStatus(id: number, status: string): Observable<string> {
+      return this.http.patch<IncomingUpdatedStatusAppRes>(`${this.apiUrl}/change-status/${id}`, {status}).pipe(
+        // Use the map operator to extract the 'jobs' array
+        map((response) => response.message)
+      );
+    }
 
 }

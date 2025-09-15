@@ -18,6 +18,9 @@ export class ApplicationsListPerJob {
   isModalOpen = false;
   selectedApplication: any = null; // store clicked application
   selectedStatus: string = 'pending';
+  selectedApplicationId : any = null;
+
+
   constructor(
     private route: ActivatedRoute,
     private applicationService: ApplicationService,
@@ -26,7 +29,11 @@ export class ApplicationsListPerJob {
 
   ngOnInit(): void {
     // Manually subscribe to the authentication state once
-    this.authService.isAuthenticated$
+   this.loadApplications()
+  }
+
+  loadApplications(){
+     this.authService.isAuthenticated$
       .pipe(
         filter((isAuthenticated) => isAuthenticated),
         take(1),
@@ -80,17 +87,25 @@ export class ApplicationsListPerJob {
   openModal(application: any) {
     this.selectedApplication = application;
     this.selectedStatus = application.status; // default to current status
+    this.selectedApplicationId = application.application_id
+    console.log(this.selectedApplicationId);
     this.isModalOpen = true;
   }
 
   closeModal() {
     this.isModalOpen = false;
     this.selectedApplication = null;
+    this.selectedApplicationId = null;
   }
 
   onChangeStatus() {
     // send PATCH request here
+    this.applicationService.updateApplicationStatus( this.selectedApplicationId, this.selectedStatus).subscribe(msg => console.log(msg))
+
     console.log('Changing status to:', this.selectedStatus);
     this.closeModal();
+    this.loadApplications();
   }
+
+
 }
