@@ -1,6 +1,30 @@
-<div class="p-5">
-    
-<button (click)="goToChart()" class="px-4 py-2 bg-blue-300 rounded-md mx-2">Stats Charts</button>
-<button (click)="goToAdminUsersTable()" class="px-4 py-2 bg-blue-300 rounded-md mx-2">Users Table</button>
+<div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-8">
+  <!-- Title -->
+  <div class="max-w-4xl w-full pb-5 text-center">
+    <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-12 tracking-tight">
+      Admin Dashboard
+    </h1>
+    <p class="text-gray-500 text-lg">Monitor and manage the system</p>
+  </div>
 
+  <!-- Cards -->
+  <div class="flex flex-col md:flex-row gap-8 w-full max-w-4xl">
+    <!-- Stats Charts -->
+    <div class="block w-full cursor-pointer" (click)="goToChart()">
+      <div class="bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center justify-center h-full transition-all duration-300 hover:scale-105 hover:shadow-2xl">
+        <div class="text-6xl mb-4">📊</div>
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">Stats Charts</h2>
+        <p class="text-gray-500 text-center">View overall platform analytics and statistics.</p>
+      </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="block w-full cursor-pointer" (click)="goToAdminUsersTable()">
+      <div class="bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center justify-center h-full transition-all duration-300 hover:scale-105 hover:shadow-2xl">
+        <div class="text-6xl mb-4">👥</div>
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">Users Table</h2>
+        <p class="text-gray-500 text-center">Manage registered users and their roles.</p>
+      </div>
+    </div>
+  </div>
 </div>

@@ -9,10 +9,7 @@ import { Component } from '@angular/core';
   styleUrl: './dashboard.scss'
 })
 export class Dashboard {
-  constructor(private authService : AuthService ,private router : Router){}
-  logout(){
-    this.authService.logout()
-  }
+  constructor(private router : Router){}
   goToEmpDashboard(){
     this.router.navigate(["/employer-dashboard"])
   }

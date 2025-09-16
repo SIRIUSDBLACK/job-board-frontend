@@ -23,7 +23,11 @@ import { JobService } from '../../services/job/job';
 import { AuthService } from '../../services/auth/auth';
 import { IncomingJobPayload } from '../../models/job.model';
 import { ApplicationService } from '../../services/application/application';
-import { IncomingCreateApplicationResponse, IncomingSeekerApplicationPayload } from '../../models/application.model';
+import {
+  IncomingCreateApplicationResponse,
+  IncomingSeekerApplicationPayload,
+} from '../../models/application.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-seeker-job-list',
@@ -42,7 +46,7 @@ export class SeekerJobList implements OnInit, OnDestroy {
 
   // State for job data
   jobs: IncomingJobPayload[] = [];
-  applicationData : IncomingSeekerApplicationPayload[] =[]
+  applicationData: IncomingSeekerApplicationPayload[] = [];
   isLoading = true;
   noJobsFound = false;
 
@@ -61,15 +65,16 @@ export class SeekerJobList implements OnInit, OnDestroy {
 
   isModalOpen = false;
   selectedJobId: number | null = null;
+  selectedJob: any;
   cvFile: File | null = null;
-  isApplcationSubmitted : 'not-applied' | 'pending' | 'success' | 'error' = 'not-applied';
-  
+  isApplcationSubmitted: 'not-applied' | 'pending' | 'success' | 'error' = 'not-applied';
 
   constructor(
     private jobService: JobService,
     private authService: AuthService,
     private cd: ChangeDetectorRef,
-    private ngZone : NgZone,
+    private router: Router,
+    private ngZone: NgZone,
     private applicationService: ApplicationService
   ) {}
 
@@ -126,8 +131,8 @@ export class SeekerJobList implements OnInit, OnDestroy {
         }),
         tap((applications) => {
           console.log('[Applications] Received applications:', applications);
-          this.applicationData = applications
-          this.appliedJobsId = new Set(applications.map((app)=>app.job_id));
+          this.applicationData = applications;
+          this.appliedJobsId = new Set(applications.map((app) => app.job_id));
           // applications.map((app)=> {
           //   this.isApplcationSubmitted = app.status
           // })
@@ -179,15 +184,15 @@ export class SeekerJobList implements OnInit, OnDestroy {
     this.jobSubscription = jobStream$.subscribe((data) => {
       this.ngZone.run(() => {
         console.log('[Jobs] Response received:', data);
-      this.jobs = data.jobs;
-      this.totalJobs = data.total;
-      this.totalPages = Math.ceil(this.totalJobs / this.limit);
-      this.noJobsFound = this.jobs.length === 0 && !this.isLoading;
-      console.log('[Jobs] Jobs count:', this.jobs.length, 'Total:', this.totalJobs);
-      this.isLoading = false
-      console.log(this.isLoading);
-      this.cd.detectChanges();
-      })
+        this.jobs = data.jobs;
+        this.totalJobs = data.total;
+        this.totalPages = Math.ceil(this.totalJobs / this.limit);
+        this.noJobsFound = this.jobs.length === 0 && !this.isLoading;
+        console.log('[Jobs] Jobs count:', this.jobs.length, 'Total:', this.totalJobs);
+        this.isLoading = false;
+        console.log(this.isLoading);
+        this.cd.detectChanges();
+      });
     });
   }
 
@@ -214,8 +219,9 @@ export class SeekerJobList implements OnInit, OnDestroy {
   }
 
   // --- Application Modal Methods ---
-  openApplyModal(jobId: number) {
-    this.selectedJobId = jobId;
+  openApplyModal(job: any) {
+    this.selectedJobId = job.id;
+    this.selectedJob = job;
     console.log(this.selectedJobId);
     this.isModalOpen = true;
     this.cvFile = null;
@@ -226,6 +232,7 @@ export class SeekerJobList implements OnInit, OnDestroy {
   closeApplyModal() {
     this.isModalOpen = false;
     this.selectedJobId = null;
+    this.selectedJob = null;
     this.cvFile = null;
   }
 
@@ -249,52 +256,51 @@ export class SeekerJobList implements OnInit, OnDestroy {
     this.isApplcationSubmitted = 'pending';
 
     // Convert the file to a Base64 string before sending
-        
-        this.applicationService.applyForJob(this.selectedJobId!, this.userId!, this.cvFile).subscribe({
-          next: (response: IncomingCreateApplicationResponse) => {
-            console.log(response);
-            this.isApplcationSubmitted = 'success';
-            this.appliedJobsId.add(this.selectedJobId!);
-            this.closeApplyModal()
-            this.cd.markForCheck();
 
-          },
-          error: (error: any) => {
-            console.error('Application failed:', error.error.message);
-            this.isApplcationSubmitted = 'error';
-            this.cd.markForCheck();
-          },
-        });
+    this.applicationService.applyForJob(this.selectedJobId!, this.userId!, this.cvFile).subscribe({
+      next: (response: IncomingCreateApplicationResponse) => {
+        console.log(response);
+        this.isApplcationSubmitted = 'success';
+        this.appliedJobsId.add(this.selectedJobId!);
+        this.closeApplyModal();
+        this.cd.markForCheck();
+      },
+      error: (error: any) => {
+        console.error('Application failed:', error.error.message);
+        this.isApplcationSubmitted = 'error';
+        this.cd.markForCheck();
+      },
+    });
   }
 
   hasApplied(jobId: number): boolean {
-    if(this.appliedJobsId.has(jobId)){
-      console.log("true");
-    }else{
-      console.log("false");
+    if (this.appliedJobsId.has(jobId)) {
+      console.log('true');
+    } else {
+      console.log('false');
     }
     return this.appliedJobsId.has(jobId);
   }
 
   getApplicationStatus(jobId: number): string | null {
-  const app = this.applicationData.find(a => a.job_id === jobId);
-  return app ? app.status : null; 
-}
-
-getApplicationStatusClass(jobId: number): string {
-  const status = this.getApplicationStatus(jobId);
-
-  switch (status) {
-    case 'pending':
-      return 'text-yellow-600 font-semibold'; // yellow for pending
-    case 'shortlisted':
-      return 'text-green-600 font-semibold'; // green for shortlisted
-    case 'rejected':
-      return 'text-red-600 font-semibold'; // red for rejected
-    default:
-      return '';
+    const app = this.applicationData.find((a) => a.job_id === jobId);
+    return app ? app.status : null;
   }
-}
 
+  getApplicationStatusClass(jobId: number): string {
+    const status = this.getApplicationStatus(jobId);
 
+    switch (status) {
+      case 'pending':
+        return 'text-yellow-600 font-semibold'; // yellow for pending
+      case 'shortlisted':
+        return 'text-green-600 font-semibold'; // green for shortlisted
+      case 'rejected':
+        return 'text-red-600 font-semibold'; // red for rejected
+      default:
+        return '';
+    }
+  }
+
+  goToJobDetail() {}
 }
