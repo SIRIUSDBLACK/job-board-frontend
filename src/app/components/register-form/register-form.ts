@@ -48,7 +48,13 @@ export class RegisterForm {
         next: (res) => {
           console.log(res);
           this.registerForm.reset();
-          this.router.navigate(['/dashboard']);
+           if(res.user.role === "admin"){
+            this.router.navigate(['/']);
+          }else if (res.user.role === "seeker"){
+            this.router.navigate(['/seeker-dashboard'])
+          }else if (res.user.role === "employer"){
+            this.router.navigate(['/employer-dashboard'])
+          }
         },
         error: (err) => {
           console.log(err.error.message);

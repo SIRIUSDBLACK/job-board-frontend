@@ -9,17 +9,34 @@ export const AuthGuard: CanActivateFn = (route, state) => {
   const platformId = inject(PLATFORM_ID);
 
   if (isPlatformBrowser(platformId)) {
-    // On the browser, we have access to localStorage
     const token = localStorage.getItem('token');
+
     if (token) {
-      return true; // Allow navigation if a token exists
+      // ✅ If token exists and user tries to access login/register → redirect
+      if (state.url === '/login' || state.url === '/register') {
+        const role = localStorage.getItem('role');
+
+        switch (role) {
+          case 'admin':
+            return router.createUrlTree(['/dashboard']);
+          case 'seeker':
+            return router.createUrlTree(['/seeker-dashboard']);
+          case 'employer':
+            return router.createUrlTree(['/employer-dashboard']);
+          default:
+            return router.createUrlTree(['/']); // fallback
+        }
+      }
+      return true; // token exists, allow access to protected route
     } else {
-      router.navigate(['/login']);
-      return false; // Block navigation if no token
+      // ❌ No token → allow only login/register
+      if (state.url !== '/login' && state.url !== '/register') {
+        return router.createUrlTree(['/login']);
+      }
+      return true;
     }
   }
 
-  // On the server, we assume the user is authenticated for rendering purposes
-  // The client-side code will handle the redirection after hydration
+  // ✅ SSR fallback (Angular Universal rendering)
   return true;
 };

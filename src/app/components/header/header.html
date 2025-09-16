@@ -1,0 +1,12 @@
+<header *ngIf="!isAuthPage()" class="bg-white shadow p-4 flex items-center justify-between">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-800">MyApp</h1>
+    <p class="text-sm text-gray-500">Your smart job portal</p>
+  </div>
+  <button 
+    class="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg shadow-md transition"
+    (click)="logout()"
+  >
+    Logout
+  </button>
+</header>

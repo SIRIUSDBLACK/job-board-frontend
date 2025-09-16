@@ -39,7 +39,8 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}/register`, payload).pipe(
       tap((res: any) => {
         localStorage.setItem('token', res.token);
-        localStorage.setItem('userId',res.user.id)
+        localStorage.setItem('userId',res.user.id);
+        localStorage.setItem('role',res.user.role);
         this.userSubject.next(res.user);
       })
     );
@@ -49,7 +50,9 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}/login`, payload).pipe(
       tap((res: any) => {
         localStorage.setItem('token', res.token);
-        localStorage.setItem('userId',res.user.id)
+        localStorage.setItem('userId',res.user.id);
+        localStorage.setItem('role',res.user.role)
+
         this.userSubject.next(res.user);
       })
     );

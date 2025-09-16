@@ -27,7 +27,7 @@ export const routes: Routes = [
   { path: 'employer-dashboard/job-table/job-detail/:id', component: JobDetail, canActivate: [AuthGuard] },
   { path: 'employer-dashboard/job-table/edit-job/:id', component: EditJob, canActivate: [AuthGuard] },
   { path : 'employer-dashboard/job-table/job-applications/:id' , component: ApplicationsListPerJob, canActivate: [AuthGuard] },
-  { path: 'login', component: Login },
-  { path: 'register', component: Register },
+  { path: 'login', component: Login , canActivate: [AuthGuard]},
+  { path: 'register', component: Register , canActivate: [AuthGuard]},
   { path: '**', component: ErrorPage },
 ];
