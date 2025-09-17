@@ -14,7 +14,7 @@ import {
   providedIn: 'root',
 })
 export class JobService {
-  private apiUrl = 'http://localhost:5000/api/job';
+  private apiUrl = 'https://job-board-backend-is94.onrender.com/api/job';
 
   constructor(private http: HttpClient) {}
 

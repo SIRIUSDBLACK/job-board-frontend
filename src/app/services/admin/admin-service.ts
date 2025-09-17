@@ -9,7 +9,7 @@ import { User, UserRole } from '../../models/user.model';
   providedIn: 'root'
 })
 export class AdminService {
-  private apiUrl = 'http://localhost:5000/api/admin';
+  private apiUrl = 'https://job-board-backend-is94.onrender.com/api/admin';
 
   constructor(private http: HttpClient , private authService: AuthService){}
   

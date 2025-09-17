@@ -16,7 +16,7 @@ import { AuthService } from '../auth/auth';
   providedIn: 'root',
 })
 export class ApplicationService {
-  private apiUrl = 'http://localhost:5000/api/application';
+  private apiUrl = 'https://job-board-backend-is94.onrender.com/api/application';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 

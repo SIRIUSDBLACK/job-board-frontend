@@ -18,7 +18,7 @@ export class AuthService {
     map((user) => !!user) // Emits true if a user exists, false otherwise
   );
 
-  private baseUrl = 'http://localhost:5000/api/auth';
+  private baseUrl = 'https://job-board-backend-is94.onrender.com/api/auth';
  
     constructor(
         private http: HttpClient, 
